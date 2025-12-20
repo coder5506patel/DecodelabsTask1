@@ -1,18 +1,18 @@
-// src/App.jsx
-
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Navbar from './Components/Navbar.jsx';
+import Navbar from './Components/Navbar';
 import Home from './Components/Home';
+import About from './Components/About';
 import './index.css';
-import './App.css';
-import About from './Components/About.jsx';
 
+/**
+ * Main App component
+ * Sets up routing and layout structure
+ */
 function App() {
   return (
     <>
       <Navbar />
-      {/* Add a main content container with top padding */}
       <main className="pt-16">
         <Routes>
           <Route path="/" element={<Home />} />

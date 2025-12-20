@@ -1,9 +1,10 @@
 import React from 'react';
-// --- UPDATED: Imported the Linkedin icon ---
 import { Users, Eye, Target, Heart, Linkedin } from 'lucide-react';
 import image from '../assets/profile.jpg';
 
-// --- Team Member Data ---
+/**
+ * Team member data
+ */
 const teamMembers = [
     {
         name: 'Shreyash Patel',
@@ -12,7 +13,9 @@ const teamMembers = [
     },
 ];
 
-// --- "Why Choose Us" Data ---
+/**
+ * Feature highlights for the About page
+ */
 const features = [
     {
         icon: <Heart size={32} className="text-fuchsia-500" />,
@@ -31,12 +34,15 @@ const features = [
     },
 ];
 
+/**
+ * About page component
+ * Displays company information, mission, vision, and team members
+ */
 const About = () => {
     return (
         <div className="bg-[var(--color-base-100)] text-white min-h-screen">
             <div className="container mx-auto px-6 py-16">
 
-                {/* --- Hero Section --- */}
                 <div className="text-center py-12">
                     <h1 className="text-5xl md:text-6xl font-bold sp-text mb-4">
                         Crafting the Future, One Line of Code at a Time.
@@ -46,7 +52,6 @@ const About = () => {
                     </p>
                 </div>
 
-                {/* --- Our Story Section --- */}
                 <div className="my-20 lg:my-24 grid md:grid-cols-2 gap-12 items-center">
                     <div className="order-2 md:order-1">
                         <h2 className="text-3xl font-bold mb-4 sp-text">Our Story</h2>
@@ -66,7 +71,6 @@ const About = () => {
                     </div>
                 </div>
 
-                {/* --- Mission & Vision Section --- */}
                 <div className="my-20 lg:my-24 grid md:grid-cols-2 gap-10">
                     <div className="bg-[var(--color-base-200)] p-8 rounded-lg">
                         <Target className="text-cyan-400 mb-4" size={40} />
@@ -80,7 +84,6 @@ const About = () => {
                     </div>
                 </div>
 
-                {/* --- Meet the Team Section --- */}
                 <div className="my-20 lg:my-24 text-center">
                     <Users className="mx-auto text-fuchsia-500 mb-4" size={48} />
                     <h2 className="text-4xl font-bold mb-4 sp-text">Meet the Innovators</h2>
@@ -102,7 +105,6 @@ const About = () => {
                     </div>
                 </div>
 
-                {/* --- Why Choose Us Section --- */}
                 <div className="my-20 lg:my-24">
                     <h2 className="text-4xl font-bold text-center mb-12 sp-text">Why Partner With Us?</h2>
                     <div className="grid md:grid-cols-3 gap-8 text-center">
@@ -118,7 +120,6 @@ const About = () => {
                     </div>
                 </div>
 
-                {/* --- NEW: Contribution / Connect Section --- */}
                 <div className="my-20 lg:my-24 text-center bg-[var(--color-base-200)] p-12 rounded-xl">
                     <h2 className="text-4xl font-bold mb-4 sp-text">Join Our Journey</h2>
                     <p className="text-gray-400 max-w-2xl mx-auto mb-8">

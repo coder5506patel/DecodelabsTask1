@@ -3,14 +3,22 @@ import Editor from '@monaco-editor/react';
 import { Code, AlertTriangle, X, Monitor, Tablet, Smartphone } from "lucide-react";
 import { transform } from '@babel/standalone';
 
+/**
+ * Preview modal component for displaying generated code
+ * Supports live preview for HTML/JSX frameworks and code view for others
+ * @param {boolean} isOpen - Controls modal visibility
+ * @param {Function} onClose - Callback to close modal
+ * @param {string} code - Generated code to preview
+ * @param {Object} framework - Selected framework object with value and extension
+ */
 const PreviewModal = ({ isOpen, onClose, code, framework }) => {
     const [viewMode, setViewMode] = useState('desktop');
     const [isAnimatingOut, setIsAnimatingOut] = useState(false);
     const [previewContent, setPreviewContent] = useState('');
     const [compileError, setCompileError] = useState(null);
 
-    const isHtmlFramework = framework?.value.includes('HTML');
-    const isJsxFramework = framework?.value.includes('JSX');
+    const isHtmlFramework = framework?.value?.includes('HTML') ?? false;
+    const isJsxFramework = framework?.value?.includes('JSX') ?? false;
 
     useEffect(() => {
         if (!isOpen || !code) return;
@@ -40,7 +48,7 @@ const PreviewModal = ({ isOpen, onClose, code, framework }) => {
                                 ${compiledJs}
                                 const container = document.getElementById('root');
                                 const root = ReactDOM.createRoot(container);
-                                // Assumes the generated component is named "Component"
+                                // Component must be named "Component" as per generation rules
                                 root.render(React.createElement(Component));
                             } catch (e) {
                                 document.body.innerHTML = '<div style="color: red; font-family: sans-serif;"><strong>Render Error:</strong><pre>' + e.message + '</pre></div>';
@@ -51,7 +59,6 @@ const PreviewModal = ({ isOpen, onClose, code, framework }) => {
                 `;
                 setPreviewContent(htmlTemplate);
             } catch (error) {
-                console.error("JSX Compilation Error:", error);
                 setCompileError(error.message);
                 setPreviewContent('');
             }
@@ -77,7 +84,10 @@ const PreviewModal = ({ isOpen, onClose, code, framework }) => {
         mobile: 'w-full h-full max-w-[420px] shadow-2xl rounded-lg'
     };
 
-    // --- UPDATED: New function to determine what to show in the modal body ---
+    /**
+     * Renders the appropriate content in the modal body
+     * Shows live preview for HTML/JSX, error message for compilation failures, or code editor for other languages
+     */
     const renderModalBody = () => {
         // Case 1: Live Preview for HTML or successfully compiled JSX
         if (previewContent && (isHtmlFramework || isJsxFramework)) {
@@ -97,7 +107,7 @@ const PreviewModal = ({ isOpen, onClose, code, framework }) => {
                 </div>
             );
         }
-        // Case 2: JSX compilation failed
+        // Case 2: JSX compilation failed - show error message
         if (compileError) {
             return (
                 <div className="text-center text-white bg-red-900/50 p-8 rounded-lg max-w-2xl">
@@ -107,7 +117,7 @@ const PreviewModal = ({ isOpen, onClose, code, framework }) => {
                 </div>
             );
         }
-        // Case 3: Code Preview for non-renderable languages (Python, Dart, etc.)
+        // Case 3: Code Preview for non-renderable languages (Python, Dart, Java, etc.)
         return (
             <div className="w-full h-full flex flex-col text-white bg-gray-900/50 p-4 rounded-lg">
                 <div className="flex items-center gap-2 mb-4 text-left">
@@ -142,7 +152,13 @@ const PreviewModal = ({ isOpen, onClose, code, framework }) => {
                             <button onClick={() => setViewMode('mobile')} className={`p-2 rounded-md transition-colors ${viewMode === 'mobile' ? 'bg-fuchsia-500' : 'hover:bg-gray-700'}`}><Smartphone size={20} /></button>
                         </div>
                     )}
-                    <button className="p-2 rounded-full hover:bg-gray-700 transition-colors" onClick={handleClose}><X size={24} /></button>
+                    <button 
+                        className="p-2 rounded-full hover:bg-gray-700 transition-colors" 
+                        onClick={handleClose}
+                        aria-label="Close preview"
+                    >
+                        <X size={24} />
+                    </button>
                 </div>
                 <div className="flex-grow p-4 md:p-6 bg-[#1e1e1e] overflow-auto flex items-center justify-center">
                     {renderModalBody()}

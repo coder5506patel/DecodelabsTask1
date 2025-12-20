@@ -1,8 +1,23 @@
 {
-  "name": "comp",
-  "private": true,
-  "version": "0.0.0",
+  "name": "compai",
+  "version": "1.0.0",
+  "description": "AI-powered component generator for multiple frameworks and languages",
   "type": "module",
+  "author": "CompAi Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/compai.git"
+  },
+  "keywords": [
+    "ai",
+    "component-generator",
+    "react",
+    "tailwindcss",
+    "code-generation",
+    "gemini-ai",
+    "developer-tools"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",

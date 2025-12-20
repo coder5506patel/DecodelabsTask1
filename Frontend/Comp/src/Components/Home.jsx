@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import copy from 'copy-to-clipboard';
 import Editor from '@monaco-editor/react';
 import { Code, Clipboard, Check, AlertTriangle, Download, View } from "lucide-react";
-import PreviewModal from './PreviewModal'; // Import the modal component
-
-// Access the API Key from Environment Variables
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-
-// Correctly Initialize the Google AI Client
-const genAI = new GoogleGenerativeAI(API_KEY);
+import PreviewModal from './PreviewModal';
+import { FRAMEWORK_OPTIONS } from '../utils/constants';
+import { generateComponentCode } from '../services/aiService';
+import { downloadFile } from '../utils/fileUtils';
 
 const Home = () => {
-    const [frameWork, setFrameWork] = useState(null);
+    const [framework, setFramework] = useState(null);
     const [description, setDescription] = useState('');
     const [generatedCode, setGeneratedCode] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -21,20 +17,8 @@ const Home = () => {
     const [isDownloaded, setIsDownloaded] = useState(false);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
-    // --- UPDATED: Added React Native ---
-    const options = [
-        { value: 'HTML & CSS', label: 'HTML & CSS', extension: 'html' },
-        { value: 'JSX with TailwindCSS', label: 'JSX with TailwindCSS', extension: 'jsx' },
-        { value: 'HTML & TailwindCSS', label: 'HTML & TailwindCSS', extension: 'html' },
-        { value: 'React Native', label: 'React Native', extension: 'jsx' },
-        { value: 'Flutter & Dart', label: 'Flutter & Dart', extension: 'dart' },
-        { value: 'Python & Django', label: 'Python & Django', extension: 'py' },
-        { value: 'Python & Flask', label: 'Python & Flask', extension: 'py' },
-        { value: 'Java & Spring', label: 'Java & Spring', extension: 'java' },
-    ];
-
     const generateComponent = async () => {
-        if (!description || !frameWork) {
+        if (!description || !framework) {
             setError("Please select a framework and provide a description.");
             return;
         }
@@ -44,33 +28,10 @@ const Home = () => {
         setGeneratedCode('');
 
         try {
-            const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite-preview-09-2025" });
-
-            // --- UPDATED: Added a rule for React Native ---
-            const prompt = `
-                You are an expert web and mobile developer. Your task is to generate a single file of production-ready code for a component.
-                Framework/Language: ${frameWork.value}
-                Component Description: ${description}
-
-                **IMPORTANT RULES:**
-                1.  Output ONLY the raw code. No comments, explanations, markdown, or any text outside the code itself.
-                2.  For "JSX with TailwindCSS", the component MUST be a standard React functional component named exactly "Component". Example: \`function Component() { return <div>...</div>; }\` It must not be an arrow function or have \`export default\`.
-                3.  For "Flutter & Dart", create a single, complete Stateless or Stateful widget. Include all necessary imports from \`material.dart\`. The main widget should be named "MyComponent".
-                4.  For "React Native", create a single functional component named "MyComponent". Import necessary components from 'react-native' and use \`StyleSheet.create\` for styling. Do not include \`export default\`.
-                5.  The code must be fully functional and ready to be copy-pasted.
-                6.  For HTML & TailwindCSS, include the Tailwind CDN script. For HTML & CSS, embed the CSS in a <style> tag.
-                7.  **For ANY component that requires an image, YOU MUST use the placeholder URL: "https://picsum.photos/seed/compai/500/500" for the image source.**
-            `;
-
-            const result = await model.generateContent(prompt);
-            const response = await result.response;
-            const text = response.text();
-
-            setGeneratedCode(text);
-
+            const code = await generateComponentCode(framework.value, description);
+            setGeneratedCode(code);
         } catch (err) {
-            console.error("AI Generation Error:", err);
-            setError("An unexpected error occurred. Please check your API key and console logs.");
+            setError(err.message || "An unexpected error occurred. Please check your API key and try again.");
         } finally {
             setIsLoading(false);
         }
@@ -84,16 +45,8 @@ const Home = () => {
     };
 
     const handleDownload = () => {
-        if (!generatedCode || !frameWork) return;
-        const blob = new Blob([generatedCode], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `component.${frameWork.extension}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        if (!generatedCode || !framework) return;
+        downloadFile(generatedCode, `component.${framework.extension}`);
         setIsDownloaded(true);
         setTimeout(() => setIsDownloaded(false), 2500);
     };
@@ -106,29 +59,35 @@ const Home = () => {
                     <h3 className='text-[25px] font-semibold sp-text'>AI Component Generator</h3>
                     <p className='text-gray-400 mt-2 text-[16px]'>Describe your component and let AI code it for you.</p>
 
-                    <p className='text-[15px] font-[700] mt-4'>Framework</p>
+                    <label htmlFor="framework-select" className='text-[15px] font-[700] mt-4 block'>
+                        Framework
+                    </label>
                     <select
-                        value={frameWork ? frameWork.value : ""}
+                        id="framework-select"
+                        value={framework?.value || ""}
                         onChange={(e) => {
-                            const selectedOption = options.find(opt => opt.value === e.target.value) || null;
-                            setFrameWork(selectedOption);
+                            const selectedOption = FRAMEWORK_OPTIONS.find(opt => opt.value === e.target.value) || null;
+                            setFramework(selectedOption);
                         }}
                         className="w-full mt-2 p-3 bg-[var(--color-base-300)] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
                     >
                         <option value="" disabled>Select a framework...</option>
-                        {options.map(option => (
+                        {FRAMEWORK_OPTIONS.map(option => (
                             <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
                     </select>
 
-                    <p className='text-[15px] font-[700] mt-4'>Component Description</p>
+                    <label htmlFor="description-textarea" className='text-[15px] font-[700] mt-4 block'>
+                        Component Description
+                    </label>
                     <textarea
+                        id="description-textarea"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         rows={10}
                         className="w-full mt-2 p-3 bg-[var(--color-base-300)] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="E.g., A responsive product card with an image, title, price, and an 'Add to Cart' button."
-                    ></textarea>
+                    />
 
                     <button
                         onClick={generateComponent}
@@ -168,7 +127,7 @@ const Home = () => {
                             <Editor
                                 height="100%"
                                 theme="vs-dark"
-                                language={frameWork?.extension === 'jsx' ? 'javascript' : (frameWork?.extension || 'html')}
+                                language={framework?.extension === 'jsx' ? 'javascript' : (framework?.extension || 'html')}
                                 value={generatedCode}
                                 options={{ readOnly: true, minimap: { enabled: false } }}
                             />
@@ -192,7 +151,7 @@ const Home = () => {
                 isOpen={isPreviewOpen}
                 onClose={() => setIsPreviewOpen(false)}
                 code={generatedCode}
-                framework={frameWork}
+                framework={framework}
             />
         </>
     );
