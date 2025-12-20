@@ -55,7 +55,7 @@ const Home = () => {
         <>
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 px-4 sm:px-6 lg:px-12 xl:px-16 py-6 lg:py-8' style={{ minHeight: 'calc(100vh - 64px)' }}>
                 {/* Left Panel: Input Form */}
-                <div className="w-full py-8 px-6 rounded-2xl bg-gradient-to-br from-[var(--color-base-200)] to-[var(--color-base-300)] border border-gray-700/50 shadow-2xl self-start overflow-y-auto hover:shadow-3xl transition-all duration-300">
+                <div className="w-full py-8 px-6 rounded-2xl bg-gradient-to-br text-black from-[var(--color-base-200)] to-[var(--color-base-300)] border border-gray-700/50 shadow-2xl self-start overflow-y-auto hover:shadow-3xl transition-all duration-300">
                     <div className="flex items-center gap-3 mb-2">
                         <div className="p-2 bg-gradient-to-br from-fuchsia-500/20 to-cyan-500/20 rounded-lg">
                             <Sparkles className="text-fuchsia-400" size={24} />
@@ -67,7 +67,7 @@ const Home = () => {
                     <p className='text-gray-400 mb-6 text-sm lg:text-base'>Describe your component and let AI code it for you.</p>
 
                     <div className="mb-6 text-black">
-                        <label htmlFor="framework-select" className='text-sm font-semibold text-gray-300 mb-2 block flex items-center gap-2'>
+                        <label htmlFor="framework-select" className='text-sm font-semibold text-black mb-2 block flex items-center gap-2'>
                             <FileCode size={16} className="text-cyan-400" />
                             Framework
                         </label>
