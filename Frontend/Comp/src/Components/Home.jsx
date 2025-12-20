@@ -66,7 +66,7 @@ const Home = () => {
                     </div>
                     <p className='text-gray-400 mb-6 text-sm lg:text-base'>Describe your component and let AI code it for you.</p>
 
-                    <div className="mb-6">
+                    <div className="mb-6 text-black">
                         <label htmlFor="framework-select" className='text-sm font-semibold text-gray-300 mb-2 block flex items-center gap-2'>
                             <FileCode size={16} className="text-cyan-400" />
                             Framework
