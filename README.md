@@ -5,7 +5,7 @@ With CompAi, you can instantly generate reusable components for multiple languag
 
 👉 Live Demo: https://compai-ruddy.vercel.app
 
-🎥 Demo video also available!
+🎥 Demo video also available
 
 ✨ Features
 
